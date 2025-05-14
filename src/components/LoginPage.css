@@ -1,54 +1,73 @@
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    display: flex;  /* Makes everything inside line up side-by-side or top-to-bottom (depending on direction) */
+    justify-content: center;  /* Pushes the content to the middle horizontally */
+    align-items: center;  /* Pushes the content to the middle vertically */
+    height: 100vh;  /* Makes the container take up the full height of the screen */
     background: linear-gradient(to right, #c5c5c5 49.5%, #ffffff 1%, #67959a 49.5%);
+    /* Creates a cool background with 3 colors split almost evenly across the screen */
 }
 
 .login-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: translateY(-10%);
+    display: flex;  /* Same as above, helps stack items (like the logo and login box) */
+    flex-direction: column;  /* Puts items in a vertical line (one on top of the other) */
+    align-items: center;  /* Keeps everything centered horizontally inside this stack */
+    transform: translateY(-10%);  /* Moves everything up a little so it's not exactly centered */
 }
 
 .login-logo {
-  width: 250px;
-  height: 200px;
-  object-fit: contain;
-  margin-bottom: 1px;
+    width: 250px;  /* Sets how wide the logo is */
+    height: 200px;  /* Sets how tall the logo is */
+    object-fit: contain;  /* Makes sure the logo fits inside the box without being squished */
+    margin-bottom: 1px;  /* Adds a tiny bit of space below the logo */
 }
 
-
 .login-box {
-    background-color: rgba(103, 149, 154, 0.8);
-    color: white;
-    width: 300px;
-    padding: 24px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    transform: translateY(10%);
+    background-color: rgba(103, 149, 154, 0.8);  /* Adds a teal background with some transparency */
+    color: white;  /* Makes text inside this box white */
+    width: 300px;  /* The box will be 300 pixels wide */
+    padding: 24px;  /* Adds space inside the box between the text and the edges */
+    border-radius: 12px;  /* Rounds the corners to make it look smoother */
+    text-align: center;  /* Centers all text inside */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);  /* Adds a soft black shadow around the box */
+    transform: translateY(10%);  /* Moves the box slightly down */
 }
 
 .login-box input {
-    display: block;
-    width: 90%;
-    margin: 10px auto;
-    padding: 10px;
-    border: none;
-    border-radius: 20px;
-    box-sizing: border-box;
+    display: block;  /* Makes each input take its own row */
+    width: 90%;  /* Input box takes 90% of the box width */
+    margin: 10px auto;  /* Adds space above and below, and centers left/right */
+    padding: 10px;  /* Adds space inside the input box */
+    border: none;  /* Removes the default border */
+    border-radius: 20px;  /* Makes the corners of the input box round */
+    box-sizing: border-box;  /* Keeps padding from messing with the box size */
 }
 
 .login-box button {
-    margin-top: 10px;
-    padding: 12px 24px;
-    border: none;
-    background-color: #c5c5c5;
-    color: white;
-    font-size: 16px;
-    border-radius: 20px;
-    cursor: pointer;
+    margin-top: 10px;  /* Adds space above the button */
+    padding: 12px 24px;  /* Adds space inside the button (top/bottom: 12px, left/right: 24px) */
+    border: none;  /* No border */
+    background-color: #c5c5c5;  /* Light gray background color */
+    color: white;  /* White text */
+    font-size: 16px;  /* Size of the text inside button */
+    border-radius: 20px;  /* Makes the button’s corners round */
+    cursor: pointer;  /* When you hover, mouse becomes a hand (so you know you can click it) */
+}
+
+.remember-me {
+    display: flex;  /* Puts checkbox and label next to each other */
+    justify-content: center;  /* Centers them horizontally */
+    align-items: center;  /* Aligns them evenly from top to bottom */
+    font-size: 12px;  /* Makes the text a little smaller */
+    gap: 6px;  /* Adds space between checkbox and text */
+    margin: 10px 0;  /* Adds space above and below the whole line */
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;  /* Makes the checkbox 16px wide */
+    height: 16px;  /* Makes the checkbox 16px tall */
+    margin-right: 8px;  /* Adds space to the right of the checkbox */
+}
+
+.remember-me input[type="checkbox"] {
+    margin: 0;  /* Resets any default margin */
 }
