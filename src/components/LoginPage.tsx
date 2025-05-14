@@ -1,28 +1,40 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import logo from "../assets/day1-logo.png";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      alert("Username and password are required");
+    if (!email || !password) {
+      alert("Email and password are required");
       return;
     }
 
     // TODO: Replace with secure API call
-    console.log("Logging in with ", { username, password });
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("Logged in user:", user);
+        alert("Login successful!");
 
-    // Optional: Reset form
-    setUsername("");
-    setPassword("");
+        // Optional: Reset form
+        setEmail("");
+        setPassword("");
+
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+        alert("Login failed:" + error.message);
+      });
   };
 
   return (
@@ -33,11 +45,11 @@ const LoginPage: React.FC = () => {
           <p>Login to your account</p>
           <form onSubmit={handleLogin}>
             <input
-              type="text"
-              placeholder="Username"
+              type="email"
+              placeholder="Email"
               className="login-input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             <input
