@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
-import "./LoginPage.css"; // You can keep using this or split styles later
+import "./RegisterPage.css"; // You can keep using this or split styles later
 
 const RegisterPage: React.FC = () => {
   // Define state for all input fields
@@ -80,38 +80,148 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-stack">
-        <div className="login-box">
+    <div className="RegisterPage-container">
+      <div className="RegisterPage-stack">
+        <div className="RegisterPage-box">
           <h2>Create an Account</h2>
           <form onSubmit={handleRegister}>
             {/* Personal Information */}
-            <input type="text" placeholder="First Name" className="register-input" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-            <input type="text" placeholder="Last Name" className="register-input" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-            <input type="email" placeholder="Email" className="register-input" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type="text" placeholder="Phone" className="register-input" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input
+              type="text"
+              placeholder="First Name"
+              className="register-input"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="register-input"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="register-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Phone"
+              className="register-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
 
             {/* Address Information */}
-            <input type="text" placeholder="Address" className="register-input" value={address} onChange={(e) => setAddress(e.target.value)} />
-            <input type="text" placeholder="City" className="register-input" value={city} onChange={(e) => setCity(e.target.value)} />
-            <input type="text" placeholder="State" className="register-input" value={state} onChange={(e) => setState(e.target.value)} />
-            <input type="text" placeholder="Zip Code" className="register-input" value={zip} onChange={(e) => setZip(e.target.value)} />
-            <input type="text" placeholder="Country" className="register-input" value={country} onChange={(e) => setCountry(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Address"
+              className="register-input"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="City"
+              className="register-input"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="State"
+              className="register-input"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Zip Code"
+              className="register-input"
+              value={zip}
+              onChange={(e) => setZip(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Country"
+              className="register-input"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+            />
 
             {/* Health Goals */}
-            <input type="number" placeholder="Age" className="register-input" value={age} onChange={(e) => setAge(e.target.value)} />
-            <input type="number" placeholder="Weight (lbs)" className="register-input" value={weight} onChange={(e) => setWeight(e.target.value)} />
-            <input type="number" placeholder="Height (inches)" className="register-input" value={height} onChange={(e) => setHeight(e.target.value)} />
-            <input type="text" placeholder="Goal" className="register-input" value={goal} onChange={(e) => setGoal(e.target.value)} />
-            <input type="text" placeholder="Timeline" className="register-input" value={timeline} onChange={(e) => setTimeline(e.target.value)} />
-            <input type="number" placeholder="Calories (optional)" className="register-input" value={calories} onChange={(e) => setCalories(e.target.value)} />
-            <input type="number" placeholder="Protein (optional)" className="register-input" value={protein} onChange={(e) => setProtein(e.target.value)} />
+            <input
+              type="number"
+              placeholder="Age"
+              className="register-input"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Weight (lbs)"
+              className="register-input"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Height (inches)"
+              className="register-input"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Goal"
+              className="register-input"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Timeline"
+              className="register-input"
+              value={timeline}
+              onChange={(e) => setTimeline(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Calories (optional)"
+              className="register-input"
+              value={calories}
+              onChange={(e) => setCalories(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Protein (optional)"
+              className="register-input"
+              value={protein}
+              onChange={(e) => setProtein(e.target.value)}
+            />
 
             {/* Account Info */}
-            <input type="password" placeholder="Password" className="register-input" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <input type="password" placeholder="Confirm Password" className="register-input" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input
+              type="password"
+              placeholder="Password"
+              className="register-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="register-input"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-            <button type="submit" className="register-button">Register</button>
+            <button type="submit" className="register-button">
+              Register
+            </button>
 
             {/* Navigation for existing users */}
             <p className="login-footer">
