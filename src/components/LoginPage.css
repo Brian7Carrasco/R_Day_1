@@ -53,6 +53,14 @@
     cursor: pointer;  /* When you hover, mouse becomes a hand (so you know you can click it) */
 }
 
+.login-box button:hover {
+    background-color: #577e86;  /* Changes the button color when you hover over it */
+}
+/* Authentication suggestion dropdown */
+.autocomplete-container {
+  position: relative;
+}
+
 .remember-me {
     display: flex;  /* Puts checkbox and label next to each other */
     justify-content: center;  /* Centers them horizontally */

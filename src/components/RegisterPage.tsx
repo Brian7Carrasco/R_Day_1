@@ -1,37 +1,68 @@
+// Import React and useState so we can make interactive components
 import React, { useState } from "react";
+
+// Import a hook that helps with Google Maps address autocomplete
+import usePlacesAutocomplete from "use-places-autocomplete";
+
+// Import Firebase function to create a new user account
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { Link, useNavigate } from "react-router-dom";
-import "./RegisterPage.css"; // You can keep using this or split styles later
 
+// Import your Firebase setup with the auth object
+import { auth, db } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
+
+
+// Import navigation and Link so we can send users to different pages
+import { useNavigate, Link } from "react-router-dom";
+
+// Import styles for this page
+import "./RegisterPage.css";
+
+
+// Start the RegisterPage component
 const RegisterPage: React.FC = () => {
-  // Define state for all input fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("");
-  const [age, setAge] = useState("");
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [goal, setGoal] = useState("");
-  const [timeline, setTimeline] = useState("");
-  const [calories, setCalories] = useState("");
-  const [protein, setProtein] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [step, setStep] = useState(1);  // Controls which form step (slide) we're on
+  const navigate = useNavigate();       // Used to redirect the user to another page
 
-  const navigate = useNavigate(); // Used to redirect the user after registration
+  // Store all the user's form answers in one object
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    password: "",
+    confirmPassword: "",
+    age: "",
+    weight: "",
+    height: "",
+    goal: "",
+    timeline: "",
+    calories: "",
+    protein: "",
+  });
 
-  // When the form is submitted
+  // Set up Google Autocomplete for the address field
+  const {
+    ready,             // tells us if autocomplete is ready to use
+    value,             // the current value typed in
+    suggestions: { status, data },  // suggestions from Google
+    setValue,          // updates the input value
+    clearSuggestions,  // removes the suggestions list
+  } = usePlacesAutocomplete();
+
+  // This function updates a specific field in the formData object
+  const updateFormData = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // When the user hits the final "Register" button
   const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault();  // Prevent page from refreshing
 
-    // Check if required fields are filled
+    const { email, password, confirmPassword } = formData;
+
+    // Make sure required fields are filled in
     if (!email || !password) {
       alert("Email and password are required");
       return;
@@ -43,195 +74,138 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    // Create the user with Firebase Auth
+    // Try to register the user with Firebase
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User registered:", user);
-        alert("User registered successfully!");
-
-        // Clear all form fields after success
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setPhone("");
-        setAddress("");
-        setCity("");
-        setState("");
-        setZip("");
-        setCountry("");
-        setAge("");
-        setWeight("");
-        setHeight("");
-        setGoal("");
-        setTimeline("");
-        setCalories("");
-        setProtein("");
-        setPassword("");
-        setConfirmPassword("");
-
-        // Redirect to dashboard
-        navigate("/dashboard");
+        console.log("User registered:", userCredential.user);  // Log info for devs
+        alert("User registered successfully!");                 // Let user know
+        navigate("/dashboard");                                // Send to dashboard
       })
       .catch((error) => {
-        console.error("Registration error:", error);
-        alert("Error: " + error.message);
+        console.error("Registration error:", error);           // Log error
+        alert("Error: " + error.message);                      // Show user the error
       });
   };
 
+  // What the page looks like (JSX)
   return (
     <div className="RegisterPage-container">
       <div className="RegisterPage-stack">
         <div className="RegisterPage-box">
           <h2>Create an Account</h2>
           <form onSubmit={handleRegister}>
-            {/* Personal Information */}
-            <input
-              type="text"
-              placeholder="First Name"
-              className="register-input"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="register-input"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="register-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Phone"
-              className="register-input"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            
+            {/* Step 1: Personal Info */}
+            {step === 1 && (
+              <div className="RegisterPage-step">
+                <input type="text" placeholder="First Name" value={formData.firstName}
+                  onChange={(e) => updateFormData("firstName", e.target.value)} />
+                
+                <input type="text" placeholder="Last Name" value={formData.lastName}
+                  onChange={(e) => updateFormData("lastName", e.target.value)} />
+                
+                <input type="email" placeholder="Email" value={formData.email}
+                  onChange={(e) => updateFormData("email", e.target.value)} />
+                
+                <input type="tel" placeholder="Phone Number" value={formData.phone}
+                  onChange={(e) => updateFormData("phone", e.target.value)} />
 
-            {/* Address Information */}
-            <input
-              type="text"
-              placeholder="Address"
-              className="register-input"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="City"
-              className="register-input"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="State"
-              className="register-input"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Zip Code"
-              className="register-input"
-              value={zip}
-              onChange={(e) => setZip(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Country"
-              className="register-input"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
+                {/* Google autocomplete input for address */}
+                <div className="autocomplete-container">
+                  <input
+                    type="text"
+                    placeholder="Address"
+                    className="register-input"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    disabled={!ready}  // disable if autocomplete isn't ready
+                  />
+                  {/* Show suggestions if Google returns them */}
+                  {status === "OK" && (
+                    <ul className="autocomplete-list">
+                      {data.map(({ place_id, description }) => (
+                        <li
+                          key={place_id}
+                          onClick={() => {
+                            updateFormData("address", description);
+                            setValue(description, false);
+                            clearSuggestions();
+                          }}
+                        >
+                          {description}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
 
-            {/* Health Goals */}
-            <input
-              type="number"
-              placeholder="Age"
-              className="register-input"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Weight (lbs)"
-              className="register-input"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Height (inches)"
-              className="register-input"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Goal"
-              className="register-input"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Timeline"
-              className="register-input"
-              value={timeline}
-              onChange={(e) => setTimeline(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Calories (optional)"
-              className="register-input"
-              value={calories}
-              onChange={(e) => setCalories(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Protein (optional)"
-              className="register-input"
-              value={protein}
-              onChange={(e) => setProtein(e.target.value)}
-            />
+                <input type="password" placeholder="Password" value={formData.password}
+                  onChange={(e) => updateFormData("password", e.target.value)} />
+                
+                <input type="password" placeholder="Confirm Password" value={formData.confirmPassword}
+                  onChange={(e) => updateFormData("confirmPassword", e.target.value)} />
 
-            {/* Account Info */}
-            <input
-              type="password"
-              placeholder="Password"
-              className="register-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className="register-input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+                <button type="button" onClick={() => setStep(2)} className="RegisterPage-button">
+                  Next
+                </button>
+              </div>
+            )}
 
-            <button type="submit" className="register-button">
-              Register
-            </button>
+            {/* Step 2: Health Info */}
+            {step === 2 && (
+              <div className="RegisterPage-step">
+                <input type="number" placeholder="Age" value={formData.age}
+                  onChange={(e) => updateFormData("age", e.target.value)} />
+                
+                <input type="number" placeholder="Weight (lbs)" value={formData.weight}
+                  onChange={(e) => updateFormData("weight", e.target.value)} />
+                
+                <input type="number" placeholder="Height (inches)" value={formData.height}
+                  onChange={(e) => updateFormData("height", e.target.value)} />
 
-            {/* Navigation for existing users */}
-            <p className="login-footer">
-              Already have an account? <Link to="/">Login</Link>
-            </p>
+                {/* Buttons to go back or move forward */}
+                <button type="button" onClick={() => setStep(1)} className="RegisterPage-button">
+                  Back
+                </button>
+                <button type="button" onClick={() => setStep(3)} className="RegisterPage-button">
+                  Next
+                </button>
+              </div>
+            )}
+
+            {/* Step 3: Goals Info */}
+            {step === 3 && (
+              <div className="RegisterPage-step">
+                <input type="text" placeholder="Fitness Goal" value={formData.goal}
+                  onChange={(e) => updateFormData("goal", e.target.value)} />
+                
+                <input type="number" placeholder="Timeline (weeks)" value={formData.timeline}
+                  onChange={(e) => updateFormData("timeline", e.target.value)} />
+                
+                <input type="number" placeholder="Calories per day (optional)" value={formData.calories}
+                  onChange={(e) => updateFormData("calories", e.target.value)} />
+                
+                <input type="number" placeholder="Protein (g, optional)" value={formData.protein}
+                  onChange={(e) => updateFormData("protein", e.target.value)} />
+
+                {/* Buttons for back and register */}
+                <button type="button" onClick={() => setStep(2)} className="RegisterPage-button">
+                  Back
+                </button>
+                <button type="submit" className="RegisterPage-button">
+                  Register
+                </button>
+              </div>
+            )}
           </form>
+            <p className="login-link">
+              Already have an account? <Link to="/login">Login</Link>
+            </p>
         </div>
       </div>
     </div>
   );
 };
 
+// Make this component available to use elsewhere
 export default RegisterPage;
