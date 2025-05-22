@@ -49,13 +49,46 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* 3. Progress circle showing how much is consumed*/}
-        <div className="dashboard-ring">
-            <div className="ring-circle">
-                <div className="ring-label">{viewMode === "calories" ? "Cal" : "Protein"}</div>
-                <div className="ring-value">{todayCalories}</div>
-                <div className="ring-sub">Daily: {caloriesGoal} {viewMode === "calories" ? "cal" : "g"}</div>
+        <div className="dashboard-ring-wrapper">
+            {/* Outer Wrapper for positioning */}
+            <div className="ring-wrapper">
+                {/* SVG progress ring */}
+                <svg className="progress-ring" width="200" height="200">
+                    <circle
+                        className="ring-bg"
+                        cx="100"
+                        cy="100"
+                        r="90"
+                        stroke="lightgray"
+                        strokeWidth="10"
+                        fill="none"
+                    />
+                    <circle
+                        className="ring-fg"
+                        cx="100"
+                        cy="100"
+                        r="90"
+                        stroke="teal"
+                        strokeWidth="10"
+                        fill="none"
+                        strokeDasharray="565.48"
+                        strokeDashoffset={(1 - todayCalories / caloriesGoal) * 565.48}
+                        />
+                </svg>
+
+                {/* Text content insdie the ring */}
+                <div className="ring-center-text">
+                    <div className="ring-label">{viewMode === "calories" ? "Cal" : "Protein"}</div>
+                    <div className="ring-value">{todayCalories}</div>
+                    <div className="ring-sub">Daily: {caloriesGoal} {viewMode === "calories" ? "cal" : "g"}</div>
+                </div>
+
+                {/* right label with line */}
+                <div className="ring-right-label">
+                    <span className="label-line"></span>
+                    Left {caloriesGoal - todayCalories} {viewMode === "calories" ? "cal" : "g"}
+                </div>
             </div>
-            <div className="ring-right-label">Left {caloriesGoal - todayCalories}</div>
         </div>
 
         {/* 4. Toggle between day and week */}
