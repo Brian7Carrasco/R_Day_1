@@ -6,7 +6,6 @@
   align-items: center;
   padding: 20px;
   font-family: 'Segoe UI', sans-serif;
-  background: #c5c5c5;
   min-height: 100vh;
 }
 
@@ -72,6 +71,11 @@
     margin-bottom: 20px;
 }
 
+/* Background for protein mode */
+.dashboard-container.protein-mode {
+  background: #bdd3d3;
+}
+
 .slider {
     width: 18px;
     height: 18px;
@@ -90,7 +94,40 @@
     background-color: #67959a;
 }
 
-/* 3. Progress Ring */
+/* 3. Flip card */
+.dashboard-flip-card {
+  perspective: 1000px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-flip-inner {
+  width: 220px;
+  height: 220px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+.dashboard-flip-card.flipped .dashboard-flip-inner {
+    transform: rotateY(180deg);
+}
+.dashboard-flip-front,
+.dashboard-flip-back {
+  backface-visibility: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.dashboard-flip-back {
+    transform: rotateY(180deg);
+}
+
+/* 4. Progress Ring */
 .dashboard-ring-wrapper {
     display: flex;
     justify-content: center;
@@ -173,7 +210,7 @@
     vertical-align: middle;
 }
 
-/* 4. Day / Week Switch */
+/* 5. Day / Week Switch */
 .dashboard-switch {
     display: flex;
     background-color: #e0e0e0;
@@ -200,7 +237,7 @@
     box-shadow: none;
 }
 
-/* 5. Meals List */
+/* 6. Meals List */
 .dashboard-meals {
     width: 100%;
     max-width: 400px;
@@ -210,11 +247,17 @@
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 12px 16px;
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between; /* ← spreads left and right */
+  align-items: center;
+  padding: 8px 12px;
+  margin-top: 12px;
 }
 
 .meal-name {
@@ -224,29 +267,89 @@
 }
 
 .meal-info {
-    font-size: 14px;
     display: flex;
     justify-content: space-between;
+    font-size: 14px;
+    padding: 0 12px 12px 12px;
     color: #666;
 }
 
 .meal-edit {
-    align-self: flex-end;
     font-size: 20px;
+    align-items: end;
     color: #888;
     cursor: pointer;
 }
 
+/* Calories Mode (default) */
+.dashboard-container.calories-mode {
+  background-color: #c5c5c5;
+}
+
+.calories-mode .ring-fg {
+  stroke: teal;
+}
+
+.calories-mode .day-pill {
+  background-color: #bfd2d3;
+}
+
+.calories-mode .dashboard-switch button {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.calories-mode .dashboard-switch .active {
+  background-color: #67959a;
+  color: white;
+}
+
+
+/* Protein Mode */
+.dashboard-container.protein-mode {
+  background-color: #bdd3d3;
+}
+
+.protein-mode .ring-fg {
+  stroke: #4d7c82;
+}
+
+.protein-mode .day-pill {
+  background-color: #d3e9e9;
+}
+
+.protein-mode .dashboard-switch button {
+  background-color: #ffffff;
+  color: #444;
+}
+
+.protein-mode .dashboard-switch .active {
+  background-color: #c5c5c5;
+  color: white;
+}
+
+.calories-mode .toggle-switch {
+  background-color: #4d7c82;
+}
+
+.protein-mode .toggle-switch {
+  background-color: #c5c5c5;
+}
+
+.protein-mode .toggle-switch.active .slider {
+  background-color: white;
+  border: 2px solid black;
+}
+
 /* Responsive Fix  */
 @media (max-width: 480px) {
-    .dashboard-ring {
-        flex-direction: column;
-        gap: 16px;
-    }
-    .ring-circle {
-        width: 140px;
-        height: 140px;
-    }
+  .dashboard-container {
+    padding: 12px;
+  }
+
+  .meal-card {
+    margin-bottom: 8px;
+  }
 }
 
 
