@@ -13,6 +13,43 @@ const DashboardPage: React.FC = () => {
     // TimeFrame is either day or week (not used yet but set up for future use)
     const [timeFrame, setTimeFrame] = useState<"day" | "week">("day");
 
+    // State to track the current center day
+    const [centerDay, setCenterDay] = useState(new Date());
+
+    // State to track the selected day
+    const [selectedDay, setSelectedDay] = useState(new Date());
+
+    // Function to get the visible days (2 before, current, 2 after)
+    const getVisibleDays = () => {
+        const days = [];
+        for (let i = -2; i <= 2; i++) {
+            const day = new Date(centerDay);
+            day.setDate(day.getDate() + i);
+            days.push(day);
+        }
+        return days;
+    };
+
+    // Function to handle day selection
+    const handleDayClick = (day: Date) => {
+        setSelectedDay(day);
+        setCenterDay(day); // This will center the clicked day in the view
+    };
+
+    // Function to handle scrolling left
+    const handleScrollLeft = () => {
+        const newCenterDay = new Date(centerDay);
+        newCenterDay.setDate(newCenterDay.getDate() - 1);
+        setCenterDay(newCenterDay);
+    };
+
+    // Function to handle scrolling right
+    const handleScrollRight = () => {
+        const newCenterDay = new Date(centerDay);
+        newCenterDay.setDate(newCenterDay.getDate() + 1);
+        setCenterDay(newCenterDay);
+    };
+
     // Example progress values for calories and protein
     const todayCalories = 1500;
     const caloriesGoal = 2000;
@@ -26,22 +63,29 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${viewMode === "protein" ? "protein-mode" : ""}`}>
 
         <div className="dashboard-days-scroll">
-            {[...Array(30)].map((_, i) => {
-                const day = new Date();
-                day.setDate(day.getDate() - 5 + i);
-                const dayLetter = day.toLocaleDateString("en-US", { weekday: "short" }).charAt(0);
-                const dateNum = day.getDate();
+            <button className="scroll-button left" onClick={handleScrollLeft}>←</button>
+            <div className="days-container">
+                {getVisibleDays().map((day, i) => {
+                    const dayLetter = day.toLocaleDateString("en-US", { weekday: "short" }).charAt(0);
+                    const dateNum = day.getDate();
+                    const isSelected = day.toDateString() === selectedDay.toDateString();
 
-                return (
-                    <div key={i} className="day-pill">
-                        <div className="day-letter">{dayLetter}</div>
-                        <div className="day-date">{dateNum}</div>
-                    </div>
-                )
-            })}
+                    return (
+                        <div 
+                            key={i} 
+                            className={`day-pill ${isSelected ? 'selected' : ''}`}
+                            onClick={() => handleDayClick(day)}
+                        >
+                            <div className="day-letter">{dayLetter}</div>
+                            <div className="day-date">{dateNum}</div>
+                        </div>
+                    );
+                })}
+            </div>
+            <button className="scroll-button right" onClick={handleScrollRight}>→</button>
         </div>
         {/* 2. Toggle button to switch between calories and protein */}
         <div className={`toggle-switch ${viewMode === "protein" ? "active" : ""}`} onClick={() => setViewMode(viewMode === "calories" ? "protein" : "calories")}>
@@ -53,27 +97,18 @@ const DashboardPage: React.FC = () => {
             {/* Outer Wrapper for positioning */}
             <div className="ring-wrapper">
                 {/* SVG progress ring */}
-                <svg className="progress-ring" width="200" height="200">
-                    <circle
-                        className="ring-bg"
-                        cx="100"
-                        cy="100"
-                        r="90"
-                        stroke="lightgray"
-                        strokeWidth="10"
-                        fill="none"
-                    />
-                    <circle
-                        className="ring-fg"
-                        cx="100"
-                        cy="100"
-                        r="90"
-                        stroke="teal"
-                        strokeWidth="10"
-                        fill="none"
-                        strokeDasharray="565.48"
-                        strokeDashoffset={(1 - todayCalories / caloriesGoal) * 565.48}
-                        />
+                <svg className="progress-ring" width="250" height="250">
+                <circle
+                    className="ring-fg"
+                    cx="125"
+                    cy="125"
+                    r="115" // or try r="90"
+                    stroke="teal"
+                    strokeWidth="15"
+                    fill="none"
+                    strokeDasharray="628"
+                    strokeDashoffset={(1 - todayCalories / caloriesGoal) * 628}
+                />
                 </svg>
 
                 {/* Text content insdie the ring */}
@@ -93,8 +128,18 @@ const DashboardPage: React.FC = () => {
 
         {/* 4. Toggle between day and week */}
         <div className="dashboard-switch">
-            <button onClick={() => setTimeFrame("day")} className={timeFrame === "day" ? "active" : ""}>D</button>
-            <button onClick={() => setTimeFrame("week")} className={timeFrame === "week" ? "active" : ""}>W</button>
+            <button 
+                onClick={() => setTimeFrame("day")} 
+                className={timeFrame === "day" ? "active" : ""}
+            >
+                Day
+            </button>
+            <button 
+                onClick={() => setTimeFrame("week")} 
+                className={timeFrame === "week" ? "active" : ""}
+            >
+                Week
+            </button>
         </div>
 
         {/* 5. Daily Meals List: loops through meals and displays info  */}
