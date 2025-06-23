@@ -19,6 +19,12 @@ const DashboardPage: React.FC = () => {
     // State to track the selected day
     const [selectedDay, setSelectedDay] = useState(new Date());
 
+    // Example progress values for calories and protein
+    const todayCalories = 1500;
+    const caloriesGoal = 2000;
+    const todayProtein = 150;
+    const proteinGoal = 200;
+
     // Function to get the visible days (2 before, current, 2 after)
     const getVisibleDays = () => {
         const days = [];
@@ -50,84 +56,103 @@ const DashboardPage: React.FC = () => {
         setCenterDay(newCenterDay);
     };
 
-    // Example progress values for calories and protein
-    const todayCalories = 1500;
-    const caloriesGoal = 2000;
+    // Ring values based on view mode
+    const ringValue = viewMode === "calories" ? todayCalories : todayProtein;
+    const ringGoal = viewMode === "calories" ? caloriesGoal : proteinGoal;
+    const ringLabel = viewMode === "calories" ? "Calories" : "Protein";
+    const ringSub = viewMode === "calories" ? `Daily: ${caloriesGoal} cal` : `Daily: ${proteinGoal} g`;
+    const ringLeft = ringGoal - ringValue;
+    const ringLeftLabel = viewMode === "calories" ? `Left ${ringLeft} cal` : `Left ${ringLeft} g`;
+    const ringStroke = viewMode === "calories" ? "#188a8a" : "#276c6f";
+    const ringCircumference = 2 * Math.PI * 115;
+    const ringProgress = Math.min(ringValue / ringGoal, 1);
+    const ringDashoffset = ringCircumference * (1 - ringProgress);
 
-    // Example  meal date to display
+    // Example meal data to display
     const meals = [
-    { name: "Meal 1: Breakfast Burrito", cal: 318, pro: 31, fat: 35 },
-    { name: "Protein shake 1: Vanilla Latte", cal: 210, pro: 32, fat: 15 },
-    { name: "Snack 1: String Cheese", cal: 8, pro: 7, fat: 5 },
-    { name: "Snack 2: String Cheese", cal: 8, pro: 7, fat: 5 },
-  ];
+        { name: "Meal 1: Breakfast Burrito", cal: 318, pro: 31, fat: 35 },
+        { name: "Protein shake 1: Vanilla Latte", cal: 210, pro: 32, fat: 15 },
+        { name: "Snack 1: String Cheese", cal: 8, pro: 7, fat: 5 },
+        { name: "Snack 2: String Cheese", cal: 8, pro: 7, fat: 5 },
+    ];
 
-  return (
-    <div className={`dashboard-container ${viewMode === "protein" ? "protein-mode" : ""}`}>
-
-        <div className="dashboard-days-scroll">
-            <button className="scroll-button left" onClick={handleScrollLeft}>←</button>
-            <div className="days-container">
-                {getVisibleDays().map((day, i) => {
-                    const dayLetter = day.toLocaleDateString("en-US", { weekday: "short" }).charAt(0);
-                    const dateNum = day.getDate();
-                    const isSelected = day.toDateString() === selectedDay.toDateString();
-
-                    return (
-                        <div 
-                            key={i} 
-                            className={`day-pill ${isSelected ? 'selected' : ''}`}
-                            onClick={() => handleDayClick(day)}
-                        >
-                            <div className="day-letter">{dayLetter}</div>
-                            <div className="day-date">{dateNum}</div>
-                        </div>
-                    );
-                })}
+    return (
+        <div className={`dashboard-container ${viewMode === "protein" ? "protein-mode" : ""}`}>
+            <div className="dashboard-days-scroll">
+                <button className="scroll-button left" onClick={handleScrollLeft}>←</button>
+                <div className="days-container">
+                    {getVisibleDays().map((day, i) => {
+                        const dayLetter = day.toLocaleDateString("en-US", { weekday: "short" }).charAt(0);
+                        const dateNum = day.getDate();
+                        const isSelected = day.toDateString() === selectedDay.toDateString();
+                        return (
+                            <div 
+                                key={i} 
+                                className={`day-pill ${isSelected ? 'selected' : ''}`}
+                                onClick={() => handleDayClick(day)}
+                            >
+                                <div className="day-letter">{dayLetter}</div>
+                                <div className="day-date">{dateNum}</div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <button className="scroll-button right" onClick={handleScrollRight}>→</button>
             </div>
-            <button className="scroll-button right" onClick={handleScrollRight}>→</button>
-        </div>
-        {/* 2. Toggle button to switch between calories and protein */}
-        <div className={`toggle-switch ${viewMode === "protein" ? "active" : ""}`} onClick={() => setViewMode(viewMode === "calories" ? "protein" : "calories")}>
+            {/* Toggle button to switch between calories and protein */}
+            <div
+            className={`toggle-switch ${viewMode === "protein" ? "active" : ""}`}
+            onClick={() =>
+                setViewMode(viewMode === "calories" ? "protein" : "calories")
+            }
+            >
             <div className="slider" />
-        </div>
-
-        {/* 3. Progress circle showing how much is consumed*/}
-        <div className="dashboard-ring-wrapper">
-            {/* Outer Wrapper for positioning */}
-            <div className="ring-wrapper">
-                {/* SVG progress ring */}
-                <svg className="progress-ring" width="250" height="250">
-                <circle
-                    className="ring-fg"
-                    cx="125"
-                    cy="125"
-                    r="115" // or try r="90"
-                    stroke="teal"
-                    strokeWidth="15"
-                    fill="none"
-                    strokeDasharray="628"
-                    strokeDashoffset={(1 - todayCalories / caloriesGoal) * 628}
-                />
-                </svg>
-
-                {/* Text content insdie the ring */}
-                <div className="ring-center-text">
-                    <div className="ring-label">{viewMode === "calories" ? "Cal" : "Protein"}</div>
-                    <div className="ring-value">{todayCalories}</div>
-                    <div className="ring-sub">Daily: {caloriesGoal} {viewMode === "calories" ? "cal" : "g"}</div>
-                </div>
-
-                {/* right label with line */}
-                <div className="ring-right-label">
-                    <span className="label-line"></span>
-                    Left {caloriesGoal - todayCalories} {viewMode === "calories" ? "cal" : "g"}
-                </div>
             </div>
-        </div>
 
-        {/* 4. Toggle between day and week */}
-        <div className="dashboard-switch">
+            {/* Animated SVG Progress Ring */}
+            <div className="ring-wrapper">
+            <svg className="progress-ring" width="250" height="250">
+                {/* Background Ring */}
+                <circle
+                cx="125"
+                cy="125"
+                r="115"
+                fill="none"
+                stroke="#e6e6e6"
+                strokeWidth="15"
+                />
+
+                {/* Foreground Progress Ring */}
+                <circle
+                cx="125"
+                cy="125"
+                r="115"
+                fill="none"
+                stroke={ringStroke}
+                strokeWidth="15"
+                strokeDasharray={ringCircumference}
+                strokeDashoffset={ringDashoffset}
+                strokeLinecap="round"
+                transform="rotate(-90 125 125)"
+                style={{
+                    transition: "stroke-dashoffset 0.6s ease, stroke 0.3s ease",
+                }}
+                />
+            </svg>
+
+            {/* Ring Labels */}
+            <div className="ring-center-text">
+                <div className="ring-label">{ringLabel}</div>
+                <div className="ring-value">{ringValue}</div>
+                <div className="ring-sub">{ringSub}</div>
+            </div>
+            <div className="ring-right-label">
+                <span className="label-line"></span>
+                {ringLeftLabel}
+            </div>
+            </div>
+            {/* Dashboard Switch - Day/Week */}
+            <div className="dashboard-switch">
             <button 
                 onClick={() => setTimeFrame("day")} 
                 className={timeFrame === "day" ? "active" : ""}
@@ -140,25 +165,27 @@ const DashboardPage: React.FC = () => {
             >
                 Week
             </button>
-        </div>
-
-        {/* 5. Daily Meals List: loops through meals and displays info  */}
-        <div className="dashboard-meals">
-            <h3>Daily Meal:</h3>
-            {meals.map((meal, index) => (
-                <div className="meal-card" key={index}>
-                    <div className="meal-name">{meal.name}</div>
-                    <div className="meal-info">
-                        <div>Calories: {meal.cal}</div>
-                        <div>Protein: {meal.pro}g</div>
-                        <div>Fat: {meal.fat}g</div>
-                    </div>
-                    <div className="meal-edit">&#9776;</div> {/* Edit icon */}
+            </div>
+            {/* Daily Meals List */}
+            <div className="dashboard-meals">
+                <div className="meals-header">
+                    <h3> Dailt Meal:</h3>
+                    <button className="add-meal-button">+</button>
                 </div>
-            ))}
+                {meals.map((meal, index) => (
+                    <div className="meal-card" key={index}>
+                        <div className="meal-name">{meal.name}</div>
+                        <div className="meal-info">
+                            <div>Calories: {meal.cal}</div>
+                            <div>Protein: {meal.pro}g</div>
+                            <div>Fat: {meal.fat}g</div>
+                        </div>
+                        <div className="meal-edit">&#9776;</div>
+                    </div>
+                ))}
+            </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default DashboardPage;
