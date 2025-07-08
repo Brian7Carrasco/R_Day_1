@@ -1,11 +1,31 @@
 import React, { useState } from "react";
 import "./DashboardPage.css";
 
+// Meal and date-structured state
+type Meal = {
+  name: string;
+  cal: number;
+  pro: number;
+  fat: number;
+};
+
+type MealsByDate = {
+  [dateKey: string]: Meal[];
+};
+
 const DashboardPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"calories" | "protein">("calories");
   const [timeFrame, setTimeFrame] = useState<"day" | "week">("day");
   const [centerDay, setCenterDay] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
+  const [mealsByDate, setMealsByDate] = useState<MealsByDate>({});
+
+  const [mealType, setMealType] = useState("Breakfast");
+  const [newMealName, setNewMealName] = useState("");
+  const [newMealCalories, setNewMealCalories] = useState("");
+  const [newMealProtein, setNewMealProtein] = useState("");
+  const [newMealFat, setNewMealFat] = useState("");
+  const [showAddMealForm, setShowAddMealForm] = useState(false);
 
   const todayCalories = 1500;
   const caloriesGoal = 2000;
@@ -37,6 +57,8 @@ const DashboardPage: React.FC = () => {
     return days;
   };
 
+  const getDateKey = (date: Date) => date.toISOString().split("T")[0];
+
   const handleDayClick = (day: Date) => {
     setSelectedDay(day);
     setCenterDay(day);
@@ -54,34 +76,27 @@ const DashboardPage: React.FC = () => {
     setCenterDay(newCenterDay);
   };
 
-  const [meals, setMeals] = useState([
-    { name: "Meal 1: Breakfast Burrito", cal: 318, pro: 31, fat: 35 },
-    { name: "Protein shake 1: Vanilla Latte", cal: 210, pro: 32, fat: 15 },
-    { name: "Snack 1: String Cheese", cal: 8, pro: 7, fat: 5 },
-    { name: "Snack 2: String Cheese", cal: 8, pro: 7, fat: 5 },
-  ]);
-
-  const [mealType, setMealType] = useState("Breakfast");
-  const [newMealName, setNewMealName] = useState("");
-  const [newMealCalories, setNewMealCalories] = useState("");
-  const [newMealProtein, setNewMealProtein] = useState("");
-  const [newMealFat, setNewMealFat] = useState("");
-  const [showAddMealForm, setShowAddMealForm] = useState(false);
-
   const handleAddMeal = () => {
     if (!newMealName || !newMealCalories || !newMealProtein || !newMealFat) {
       alert("Please fill in all fields");
       return;
     }
 
-    const newMeal = {
+    const newMeal: Meal = {
       name: `${mealType}: ${newMealName}`,
       cal: parseInt(newMealCalories),
       pro: parseInt(newMealProtein),
       fat: parseInt(newMealFat),
     };
 
-    setMeals([...meals, newMeal]);
+    const key = getDateKey(selectedDay);
+    const updatedMeals = [...(mealsByDate[key] || []), newMeal];
+
+    setMealsByDate((prev) => ({
+      ...prev,
+      [key]: updatedMeals,
+    }));
+
     setNewMealName("");
     setNewMealCalories("");
     setNewMealProtein("");
@@ -89,6 +104,9 @@ const DashboardPage: React.FC = () => {
     setMealType("Breakfast");
     setShowAddMealForm(false);
   };
+
+  const currentKey = getDateKey(selectedDay);
+  const meals = mealsByDate[currentKey] || [];
 
   return (
     <div
@@ -174,7 +192,7 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Day/Week Toggle */}
+      {/* Day/Week Switch */}
       <div className="dashboard-switch">
         <button
           onClick={() => setTimeFrame("day")}
@@ -262,7 +280,7 @@ const DashboardPage: React.FC = () => {
           </div>
         ) : (
           <div className="meals-list">
-            {meals.map((meal, index) => (
+            {meals.map((meal: Meal, index: number) => (
               <div className="meal-card" key={index}>
                 <div className="meal-name">{meal.name}</div>
                 <div className="meal-info">
