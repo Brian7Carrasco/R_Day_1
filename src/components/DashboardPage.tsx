@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./DashboardPage.css";
 
-// Meal and date-structured state
 type Meal = {
   name: string;
   cal: number;
@@ -18,8 +17,8 @@ const DashboardPage: React.FC = () => {
   const [timeFrame, setTimeFrame] = useState<"day" | "week">("day");
   const [centerDay, setCenterDay] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
-  const [mealsByDate, setMealsByDate] = useState<MealsByDate>({});
 
+  const [mealsByDate, setMealsByDate] = useState<MealsByDate>({});
   const [mealType, setMealType] = useState("Breakfast");
   const [newMealName, setNewMealName] = useState("");
   const [newMealCalories, setNewMealCalories] = useState("");
@@ -27,25 +26,12 @@ const DashboardPage: React.FC = () => {
   const [newMealFat, setNewMealFat] = useState("");
   const [showAddMealForm, setShowAddMealForm] = useState(false);
 
-  const todayCalories = 1500;
   const caloriesGoal = 2000;
-  const todayProtein = 150;
   const proteinGoal = 200;
 
-  const ringValue = viewMode === "calories" ? todayCalories : todayProtein;
-  const ringGoal = viewMode === "calories" ? caloriesGoal : proteinGoal;
-  const ringLabel = viewMode === "calories" ? "Calories" : "Protein";
-  const ringSub =
-    viewMode === "calories"
-      ? `Daily: ${caloriesGoal} cal`
-      : `Daily: ${proteinGoal} g`;
-  const ringLeft = ringGoal - ringValue;
-  const ringLeftLabel =
-    viewMode === "calories" ? `Left ${ringLeft} cal` : `Left ${ringLeft} g`;
-  const ringStroke = viewMode === "calories" ? "#188a8a" : "#276c6f";
-  const ringCircumference = 2 * Math.PI * 115;
-  const ringProgress = Math.min(ringValue / ringGoal, 1);
-  const ringDashoffset = ringCircumference * (1 - ringProgress);
+  const getDateKey = (date: Date) => {
+    return date.toISOString().split("T")[0];
+  };
 
   const getVisibleDays = () => {
     const days = [];
@@ -56,8 +42,6 @@ const DashboardPage: React.FC = () => {
     }
     return days;
   };
-
-  const getDateKey = (date: Date) => date.toISOString().split("T")[0];
 
   const handleDayClick = (day: Date) => {
     setSelectedDay(day);
@@ -89,12 +73,12 @@ const DashboardPage: React.FC = () => {
       fat: parseInt(newMealFat),
     };
 
-    const key = getDateKey(selectedDay);
-    const updatedMeals = [...(mealsByDate[key] || []), newMeal];
+    const currentKey = getDateKey(selectedDay);
+    const updatedMeals = [...(mealsByDate[currentKey] || []), newMeal];
 
     setMealsByDate((prev) => ({
       ...prev,
-      [key]: updatedMeals,
+      [currentKey]: updatedMeals,
     }));
 
     setNewMealName("");
@@ -108,13 +92,40 @@ const DashboardPage: React.FC = () => {
   const currentKey = getDateKey(selectedDay);
   const meals = mealsByDate[currentKey] || [];
 
+  const calculateDailyTotals = (meals: Meal[]) => {
+    let totalCalories = 0;
+    let totalProtein = 0;
+    meals.forEach((meal) => {
+      totalCalories += meal.cal;
+      totalProtein += meal.pro;
+    });
+    return { totalCalories, totalProtein };
+  };
+
+  const { totalCalories, totalProtein } = calculateDailyTotals(meals);
+
+  const ringValue = viewMode === "calories" ? totalCalories : totalProtein;
+  const ringGoal = viewMode === "calories" ? caloriesGoal : proteinGoal;
+  const ringLabel = viewMode === "calories" ? "Calories" : "Protein";
+  const ringSub =
+    viewMode === "calories"
+      ? `Daily: ${caloriesGoal} cal`
+      : `Daily: ${proteinGoal} g`;
+  const ringLeft = Math.max(ringGoal - ringValue, 0);
+  const ringLeftLabel =
+    viewMode === "calories" ? `Left ${ringLeft} cal` : `Left ${ringLeft} g`;
+  const ringStroke = viewMode === "calories" ? "#188a8a" : "#276c6f";
+  const ringCircumference = 2 * Math.PI * 115;
+  const ringProgress = Math.min(ringValue / ringGoal, 1);
+  const ringDashoffset = ringCircumference * (1 - ringProgress);
+
   return (
     <div
       className={`dashboard-container ${
         viewMode === "protein" ? "protein-mode" : ""
       }`}
     >
-      {/* Date Selector */}
+      {/* Day Selector */}
       <div className="dashboard-days-scroll">
         <button className="scroll-button left" onClick={handleScrollLeft}>
           ←
@@ -192,7 +203,7 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Day/Week Switch */}
+      {/* Timeframe Toggle */}
       <div className="dashboard-switch">
         <button
           onClick={() => setTimeFrame("day")}
@@ -208,7 +219,7 @@ const DashboardPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Meals Section */}
+      {/* Meals List */}
       <div className="dashboard-meals">
         <div className="meals-header">
           <h3>Daily Meal:</h3>
