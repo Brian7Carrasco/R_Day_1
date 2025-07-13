@@ -17,7 +17,6 @@ const DashboardPage: React.FC = () => {
   const [timeFrame, setTimeFrame] = useState<"day" | "week">("day");
   const [centerDay, setCenterDay] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
-
   const [mealsByDate, setMealsByDate] = useState<MealsByDate>({});
   const [mealType, setMealType] = useState("Breakfast");
   const [newMealName, setNewMealName] = useState("");
@@ -25,13 +24,33 @@ const DashboardPage: React.FC = () => {
   const [newMealProtein, setNewMealProtein] = useState("");
   const [newMealFat, setNewMealFat] = useState("");
   const [showAddMealForm, setShowAddMealForm] = useState(false);
+  const [showOptionsIndex, setShowOptionsIndex] = useState<number | null>(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+
+  const getDateKey = (date: Date) => date.toISOString().split("T")[0];
+  const currentKey = getDateKey(selectedDay);
+  const meals = mealsByDate[currentKey] || [];
 
   const caloriesGoal = 2000;
   const proteinGoal = 200;
 
-  const getDateKey = (date: Date) => {
-    return date.toISOString().split("T")[0];
-  };
+  const todayCalories = meals.reduce((sum, meal) => sum + meal.cal, 0);
+  const todayProtein = meals.reduce((sum, meal) => sum + meal.pro, 0);
+
+  const ringValue = viewMode === "calories" ? todayCalories : todayProtein;
+  const ringGoal = viewMode === "calories" ? caloriesGoal : proteinGoal;
+  const ringLabel = viewMode === "calories" ? "Calories" : "Protein";
+  const ringSub =
+    viewMode === "calories"
+      ? `Daily: ${caloriesGoal} cal`
+      : `Daily: ${proteinGoal} g`;
+  const ringLeft = Math.max(0, ringGoal - ringValue);
+  const ringLeftLabel =
+    viewMode === "calories" ? `Left ${ringLeft} cal` : `Left ${ringLeft} g`;
+  const ringStroke = viewMode === "calories" ? "#188a8a" : "#276c6f";
+  const ringCircumference = 2 * Math.PI * 115;
+  const ringProgress = Math.min(ringValue / ringGoal, 1);
+  const ringDashoffset = ringCircumference * (1 - ringProgress);
 
   const getVisibleDays = () => {
     const days = [];
@@ -49,15 +68,15 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleScrollLeft = () => {
-    const newCenterDay = new Date(centerDay);
-    newCenterDay.setDate(newCenterDay.getDate() - 1);
-    setCenterDay(newCenterDay);
+    const newDay = new Date(centerDay);
+    newDay.setDate(centerDay.getDate() - 1);
+    setCenterDay(newDay);
   };
 
   const handleScrollRight = () => {
-    const newCenterDay = new Date(centerDay);
-    newCenterDay.setDate(newCenterDay.getDate() + 1);
-    setCenterDay(newCenterDay);
+    const newDay = new Date(centerDay);
+    newDay.setDate(centerDay.getDate() + 1);
+    setCenterDay(newDay);
   };
 
   const handleAddMeal = () => {
@@ -73,13 +92,8 @@ const DashboardPage: React.FC = () => {
       fat: parseInt(newMealFat),
     };
 
-    const currentKey = getDateKey(selectedDay);
-    const updatedMeals = [...(mealsByDate[currentKey] || []), newMeal];
-
-    setMealsByDate((prev) => ({
-      ...prev,
-      [currentKey]: updatedMeals,
-    }));
+    const updatedMeals = [...meals, newMeal];
+    setMealsByDate((prev) => ({ ...prev, [currentKey]: updatedMeals }));
 
     setNewMealName("");
     setNewMealCalories("");
@@ -89,35 +103,47 @@ const DashboardPage: React.FC = () => {
     setShowAddMealForm(false);
   };
 
-  const currentKey = getDateKey(selectedDay);
-  const meals = mealsByDate[currentKey] || [];
-
-  const calculateDailyTotals = (meals: Meal[]) => {
-    let totalCalories = 0;
-    let totalProtein = 0;
-    meals.forEach((meal) => {
-      totalCalories += meal.cal;
-      totalProtein += meal.pro;
-    });
-    return { totalCalories, totalProtein };
+  const handleRemoveMeal = (index: number) => {
+    const updated = meals.filter((_, i) => i !== index);
+    setMealsByDate((prev) => ({ ...prev, [currentKey]: updated }));
+    setShowOptionsIndex(null);
   };
 
-  const { totalCalories, totalProtein } = calculateDailyTotals(meals);
+  const handleEditMeal = (index: number) => {
+    const meal = meals[index];
+    const nameParts = meal.name.split(": ");
+    setMealType(nameParts[0]);
+    setNewMealName(nameParts[1]);
+    setNewMealCalories(meal.cal.toString());
+    setNewMealProtein(meal.pro.toString());
+    setNewMealFat(meal.fat.toString());
+    setEditIndex(index);
+    setShowAddMealForm(true);
+    setShowOptionsIndex(null);
+  };
 
-  const ringValue = viewMode === "calories" ? totalCalories : totalProtein;
-  const ringGoal = viewMode === "calories" ? caloriesGoal : proteinGoal;
-  const ringLabel = viewMode === "calories" ? "Calories" : "Protein";
-  const ringSub =
-    viewMode === "calories"
-      ? `Daily: ${caloriesGoal} cal`
-      : `Daily: ${proteinGoal} g`;
-  const ringLeft = Math.max(ringGoal - ringValue, 0);
-  const ringLeftLabel =
-    viewMode === "calories" ? `Left ${ringLeft} cal` : `Left ${ringLeft} g`;
-  const ringStroke = viewMode === "calories" ? "#188a8a" : "#276c6f";
-  const ringCircumference = 2 * Math.PI * 115;
-  const ringProgress = Math.min(ringValue / ringGoal, 1);
-  const ringDashoffset = ringCircumference * (1 - ringProgress);
+  const handleSaveEdit = () => {
+    if (editIndex === null) return;
+    const updatedMeal: Meal = {
+      name: `${mealType}: ${newMealName}`,
+      cal: parseInt(newMealCalories),
+      pro: parseInt(newMealProtein),
+      fat: parseInt(newMealFat),
+    };
+
+    const updatedMeals = meals.map((m, i) =>
+      i === editIndex ? updatedMeal : m
+    );
+    setMealsByDate((prev) => ({ ...prev, [currentKey]: updatedMeals }));
+
+    setNewMealName("");
+    setNewMealCalories("");
+    setNewMealProtein("");
+    setNewMealFat("");
+    setMealType("Breakfast");
+    setEditIndex(null);
+    setShowAddMealForm(false);
+  };
 
   return (
     <div
@@ -125,17 +151,13 @@ const DashboardPage: React.FC = () => {
         viewMode === "protein" ? "protein-mode" : ""
       }`}
     >
-      {/* Day Selector */}
+      {/* Date Selector */}
       <div className="dashboard-days-scroll">
-        <button className="scroll-button left" onClick={handleScrollLeft}>
+        <button className="scroll-button" onClick={handleScrollLeft}>
           ←
         </button>
         <div className="days-container">
           {getVisibleDays().map((day, i) => {
-            const dayLetter = day
-              .toLocaleDateString("en-US", { weekday: "short" })
-              .charAt(0);
-            const dateNum = day.getDate();
             const isSelected =
               day.toDateString() === selectedDay.toDateString();
             return (
@@ -144,18 +166,22 @@ const DashboardPage: React.FC = () => {
                 className={`day-pill ${isSelected ? "selected" : ""}`}
                 onClick={() => handleDayClick(day)}
               >
-                <div className="day-letter">{dayLetter}</div>
-                <div className="day-date">{dateNum}</div>
+                <div className="day-letter">
+                  {day
+                    .toLocaleDateString("en-US", { weekday: "short" })
+                    .charAt(0)}
+                </div>
+                <div className="day-date">{day.getDate()}</div>
               </div>
             );
           })}
         </div>
-        <button className="scroll-button right" onClick={handleScrollRight}>
+        <button className="scroll-button" onClick={handleScrollRight}>
           →
         </button>
       </div>
 
-      {/* Toggle Switch */}
+      {/* Toggle View */}
       <div
         className={`toggle-switch ${viewMode === "protein" ? "active" : ""}`}
         onClick={() =>
@@ -203,23 +229,23 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Timeframe Toggle */}
+      {/* Day/Week Toggle */}
       <div className="dashboard-switch">
         <button
-          onClick={() => setTimeFrame("day")}
           className={timeFrame === "day" ? "active" : ""}
+          onClick={() => setTimeFrame("day")}
         >
           Day
         </button>
         <button
-          onClick={() => setTimeFrame("week")}
           className={timeFrame === "week" ? "active" : ""}
+          onClick={() => setTimeFrame("week")}
         >
           Week
         </button>
       </div>
 
-      {/* Meals List */}
+      {/* Meals Section */}
       <div className="dashboard-meals">
         <div className="meals-header">
           <h3>Daily Meal:</h3>
@@ -231,9 +257,8 @@ const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {showAddMealForm ? (
+        {showAddMealForm && (
           <div className="add-meal-panel">
-            <h3>Add a Meal</h3>
             <select
               value={mealType}
               onChange={(e) => setMealType(e.target.value)}
@@ -275,35 +300,50 @@ const DashboardPage: React.FC = () => {
             <div className="add-meal-buttons">
               <button
                 type="button"
-                onClick={() => setShowAddMealForm(false)}
                 className="RegisterPage-button"
+                onClick={() => setShowAddMealForm(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                onClick={handleAddMeal}
                 className="RegisterPage-button"
+                onClick={editIndex !== null ? handleSaveEdit : handleAddMeal}
               >
-                Add Meal
+                {editIndex !== null ? "Save" : "Add Meal"}
               </button>
             </div>
           </div>
-        ) : (
-          <div className="meals-list">
-            {meals.map((meal: Meal, index: number) => (
-              <div className="meal-card" key={index}>
-                <div className="meal-name">{meal.name}</div>
-                <div className="meal-info">
-                  <div>Calories: {meal.cal}</div>
-                  <div>Protein: {meal.pro}g</div>
-                  <div>Fat: {meal.fat}g</div>
-                </div>
-                <div className="meal-edit">&#9776;</div>
-              </div>
-            ))}
-          </div>
         )}
+
+        <div className="meals-list">
+          {meals.map((meal, index) => (
+            <div className="meal-card" key={index}>
+              <div className="meal-name">{meal.name}</div>
+              <div className="meal-info">
+                <div>Calories: {meal.cal}</div>
+                <div>Protein: {meal.pro}g</div>
+                <div>Fat: {meal.fat}g</div>
+              </div>
+              <div
+                className="meal-edit"
+                onClick={() =>
+                  setShowOptionsIndex(showOptionsIndex === index ? null : index)
+                }
+              >
+                &#9776;
+              </div>
+              {showOptionsIndex === index && (
+                <div className="meal-options">
+                  <button onClick={() => handleEditMeal(index)}>Edit</button>
+                  <button onClick={() => handleRemoveMeal(index)}>
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

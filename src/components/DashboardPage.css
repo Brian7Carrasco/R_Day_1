@@ -93,15 +93,6 @@
   box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-.protein-mode .day-pill.selected {
-  color: #c5c5c5;
-}
-
-.day-pill:hover:not(.selected) {
-  transform: translateY(-2px);
-  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4);
-}
-
 .day-letter {
   font-size: 15px;
   font-weight: 400;
@@ -149,43 +140,16 @@
 }
 
 /* Ring Progress */
-.dashboard-ring-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-}
-
 .ring-wrapper {
-  overflow: visible;
   width: 250px;
   height: 250px;
-  background: #3a5a5e;
-  border-radius: 50%;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3);
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.protein-mode .ring-wrapper {
-  background: #c5c5c5;
-}
-
-.ring-highlight {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 200px;
-  height: 40px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 100%);
-  border-radius: 100px 100px 60px 60px / 60px 60px 100px 100px;
-  filter: blur(6px);
-  opacity: 0.7;
-  pointer-events: none;
-  z-index: 2;
+.progress-ring {
+  width: 100%;
+  height: 100%;
 }
 
 .ring-center-text {
@@ -194,23 +158,20 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #fff;
+  color: #3a5a5e;
   z-index: 3;
-  text-shadow: none;
 }
 
 .ring-label {
   font-size: 20px;
   font-weight: 500;
   opacity: 0.92;
-  letter-spacing: 0.5px;
 }
 
 .ring-value {
   font-size: 54px;
   font-weight: 700;
   margin: 8px 0 0 0;
-  letter-spacing: 1px;
 }
 
 .ring-sub {
@@ -241,95 +202,25 @@
   border-radius: 2px;
 }
 
-/* Dashboard Switch */
-.dashboard-switch {
-  display: flex;
-  background: #b3f0f8;
-  border-radius: 20px;
-  padding: 4px;
-  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.3);
-  margin: 12px 0 18px 0;
-  position: relative;
-  width: 120px;
-  height: 40px;
-}
-
-.protein-mode .dashboard-switch {
-  background: #e2e2e2;
-}
-
- .dashboard-meals {
-  width: 100%;
-  max-width: 440px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 28px;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2);
-  padding: 28px 18px 24px 18px;
-  margin-top: 8px;
-  background-color: rgba(77, 124, 130, 0.6); /* #4d7c82 @ 60% opacity */
-}
-
-.protein-mode .dashboard-meals {
-  background-color: rgba(197, 197, 197, 0.302); /* #c5c5c5 @ 60% opacity */
-}
-
-.dashboard-switch button {
-  flex: 1;
-  border: none;
-  background: #f4f4f4;
-  color: #3a5a5e;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s ease;
-  border-radius: 16px;
-  margin: 0 2px;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.dashboard-switch button.active {
-  background: #6ea9b1;
-  color: #fff;
-  box-shadow: none;
-}
-
-.protein-mode .dashboard-switch button.active {
-  background: #c5c5c5;
-  color: #3a5a5e;
-  box-shadow: none;
-}
-
-.dashboard-switch button:hover:not(.active) {
-  transform: translateY(-1px);
-  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.dashboard-switch button:active:not(.active) {
-  transform: translateY(1px);
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Meals Section */
+/* Meals */
 .dashboard-meals {
   width: 100%;
   max-width: 440px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 28px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(100, 184, 195, 0.3);
   box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2);
-  padding: 28px 18px 24px 18px;
-  margin-top: 8px;
-  background-color: rgba(100, 184, 195, 0.387);
+  margin-bottom: 28px;
+}
+
+.protein-mode .dashboard-meals {
+  background-color: rgba(197, 197, 197, 0.3);
 }
 
 .meals-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
   font-size: 22px;
   color: #3a5a5e;
   font-weight: 600;
@@ -345,231 +236,109 @@
   height: 32px;
   font-size: 20px;
   cursor: pointer;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease;
 }
 
-.add-meal-button:hover {
-  background: #3a5a5e;
-}
-
-/* Meal Cards */
-.meal-card {
-  background: rgba(252, 246, 246, 0.8);
-  border-radius: 20px;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2);
-  padding: 16px 18px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.protein-mode .meal-card {
-  background-color: rgba(197, 197, 197, 0.6);
-}
-
-.meal-icon {
-  width: 48px;
-  height: 48px;
-  background: #d6e9ee;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
-  font-size: 26px;
-  margin-right: 10px;
-}
-
-.protein-mode .meal-icon {
-  background: #c5c5c5;
-}
-
-.meal-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.meal-name {
-  font-weight: 600;
-  font-size: 17px;
-  color: #276c6f;
-  margin-bottom: 2px;
-}
-
-.protein-mode .meal-name {
-  color: #276c6f;
-}
-
-.meal-info {
-  font-size: 15px;
-  color: #4d7c82;
-  display: flex;
-  gap: 18px;
-  font-weight: 500;
-}
-
-.protein-mode .meal-info {
-  color: #3a5a5e;
-}
-
-.meal-edit {
-  font-size: 22px;
-  color: #b0c4c4;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: color 0.2s;
-}
-
-.meal-edit:hover {
-  color: #4d7c82;
-}
-
-.protein-mode .meal-edit {
-  color: #a0a0a0;
-}
-
-.protein-mode .meal-edit:hover {
-  color: #3a5a5e;
-}
-
-/* add mael */
 .add-meal-panel {
-  background-color: rgba(103, 149, 154, 0.8);
-  padding: 24px;
-  border-radius: 20px;
-  box-shadow: 0 0 15px rgda(0, 0, 0, 0.3);
-  margin-top: 16px;
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.add-meal-panel h3{
-  font-size: 20px;
-  color: white;
-  margin-bottom: 16px;
+  margin-top: 20px;
 }
 
 .add-meal-input {
-  display: block;
   width: 100%;
-  margin: 10px 0;
   padding: 10px;
+  margin: 6px 0;
   border: none;
-  border-radius: 20px;
-  box-sizing: border-box;
+  border-radius: 8px;
 }
 
 .add-meal-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .RegisterPage-button {
-  padding: 12px 24px;
-  border: none;
-  background-color: #c5c5c5;
+  flex: 1;
+  padding: 10px;
+  background-color: #4d7c82;
   color: white;
-  font-size: 16px;
-  border-radius: 20px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  width: 48%;
+}
+
+.meal-card {
+  background: white;
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-top: 14px;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.meal-info {
+  font-size: 15px;
+  font-weight: 500;
+  color: #4d7c82;
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.meal-edit {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  cursor: pointer;
+  color: #888;
+  font-size: 18px;
+}
+
+.meal-options {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.meal-options button {
+  padding: 6px 12px;
+  background-color: #e6e6e6;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.meal-options button:hover {
+  background-color: #ccc;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
-  .dashboard-container,
-  .dashboard-days-scroll,
-  .dashboard-switch,
-  .dashboard-meals {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .days-container {
-    gap: 4px;
-  }
-
-  .day-pill {
-    width: 40px;
-    height: 40px;
-    font-size: 0.8rem;
-  }
-
-  .day-letter {
-    font-size: 11px;
-  }
-
-  .day-date {
-    font-size: 14px;
-  }
-
   .ring-wrapper {
     width: 45vw;
     height: 45vw;
   }
 
-  .progress-ring {
-    width: 100%;
-    height: 100%;
-  }
-
-  .ring-center-text {
-    font-size: 0.8rem;
-  }
-
   .ring-value {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
+  .ring-label,
   .ring-sub {
-    font-size: 0.85rem;
-  }
-
-  .ring-right-label {
-    font-size: 0.75rem;
-    left: 105%;
-    transform: translateY(-50%) translateX(5px);
-  }
-
-  .label-line {
-    width: 30px;
-  }
-
-  .dashboard-meals h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
+    font-size: 1rem;
   }
 
   .meal-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 8px 6px;
-    margin-bottom: 8px;
-    border-radius: 10px;
-  }
-
-  .meal-name {
-    font-size: 13px;
+    padding: 10px 12px;
   }
 
   .meal-info {
-    font-size: 12px;
-    gap: 8px;
-    margin-top: 2px;
+    font-size: 13px;
   }
 
-  .dashboard-switch button {
-    width: 100%;
-    margin: 5px 0;
+  .RegisterPage-button {
+    font-size: 14px;
+    padding: 8px 16px;
   }
 }
