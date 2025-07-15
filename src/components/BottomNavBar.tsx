@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./BottomNavBar.css";
+import "./BottomNavBar.css";
 
 const BottomNavBar: React.FC = () => {
   return (
