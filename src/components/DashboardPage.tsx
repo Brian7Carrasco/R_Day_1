@@ -229,22 +229,6 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Day/Week Toggle */}
-      <div className="dashboard-switch">
-        <button
-          className={timeFrame === "day" ? "active" : ""}
-          onClick={() => setTimeFrame("day")}
-        >
-          Day
-        </button>
-        <button
-          className={timeFrame === "week" ? "active" : ""}
-          onClick={() => setTimeFrame("week")}
-        >
-          Week
-        </button>
-      </div>
-
       {/* Meals Section */}
       <div className="dashboard-meals">
         <div className="meals-header">
