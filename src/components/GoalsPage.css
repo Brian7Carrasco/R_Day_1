@@ -1,0 +1,175 @@
+.goals-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #b2d0d6, #c7e0e7);
+  transition: all 0.3s ease;
+}
+
+.goals-container.protein-mode {
+  background: #f1efef;
+}
+
+.goals-title {
+  font-size: 26px;
+  color: #3a5a5e;
+  margin: 32px 0 20px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.goal-summary-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 20px 24px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  color: #3a5a5e;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.goal-summary-card p {
+  margin: 8px 0;
+}
+
+.goals-edit-button {
+  padding: 12px 24px;
+  background-color: #4d7c82;
+  color: white;
+  border: none;
+  border-radius: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.goals-edit-button:hover {
+  background-color: #3a5a5e;
+  transform: scale(1.03);
+}
+
+.goals-edit-button:active {
+  transform: scale(0.97);
+}
+
+/* 📊 Recharts container */
+.recharts-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(25px);
+box-shadow:
+  0 6px 24px rgba(0, 0, 0, 0.2),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1),
+  inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  width: 54px;
+  height: 28px;
+  background: #d0e4e7;
+  border-radius: 20px;
+  position: relative;
+  margin: 20px 0 10px 0;
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.protein-mode .toggle-switch {
+  background: #c5c5c5;
+}
+
+.slider {
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: left 0.3s;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch.active .slider {
+  left: 29px;
+  background: #4d7c82;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .goals-title {
+    font-size: 22px;
+  }
+
+  .goal-summary-card {
+    font-size: 16px;
+    padding: 16px;
+  }
+
+  .goals-edit-button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+
+.goal-days-list {
+  width: 100%;
+  max-width: 440px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.goal-day-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: #3a5a5e;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  transition: background 0.3s ease;
+}
+
+.protein-mode .goal-day-card {
+  background: rgba(255, 255, 255, 0.1); /* keep consistent with chart */
+  color: #2f2f2f;
+}
+
+.goal-day-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.goal-day-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
